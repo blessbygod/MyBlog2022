@@ -21,10 +21,23 @@ module.exports = {
 			{ text: '首页', link: '/' },
 			{ text: '关于', link: '/about/' },
 		],
-		//   侧边导航
 		sidebar: [
-			{ text: 'Vue3的源碼解析', link: '/mine/' },
-			{ text: 'Vue3', link: '/vue3/' }
+			{ text: 'Vue3源代码解析', link: '/vue3/' },
+			{
+				text: 'Ghost博客',
+				link: '/ghost/',
+				children: [
+					{ text: 'ghost default', link: '/ghost/' },
+					{ text: '2016-03-11', link: '/ghost/2016-03-11' },
+					{ text: '2017-02-06', link: '/ghost/2017-02-06' },
+					{ text: '2019-06-16', link: '/ghost/2019-06-16' },
+					{ text: '2019-06-16-2', link: '/ghost/2019-06-16-2' },
+					{ text: '2019-11-10', link: '/ghost/2019-11-10' },
+					{ text: '2021-01-11', link: '/ghost/2021-01-11' },
+					{ text: '2021-03-11', link: '/ghost/2021-03-11' },
+					{ text: '2021-09-19', link: '/ghost/2021-09-19' },
+				]
+			}
 		]
 	}
 }

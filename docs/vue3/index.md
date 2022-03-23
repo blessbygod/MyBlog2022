@@ -10,7 +10,7 @@
 `一个好的框架一般都会有非常完善的测试代码和很高的测试覆盖率，从测试代码看起，相当于反过来看作者的思路，他是怎么验证自己的代码设计是完备的，而且会使用核心的API来测试代码的。`
 - 从README.md看起
 
-#### 具体分析hydration.spec.ts
+### 具体分析hydration.spec.ts
 - Vue3是用的jest进行测试的，安装ts-jest进行单文件测试
 ` 在项目根目录备份jest.config.js， 修改testMatch项为单文件即可`
 - `npm run test`, 先从测试输出看：
