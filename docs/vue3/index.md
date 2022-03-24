@@ -3,7 +3,7 @@
 ### 先写自己关心的技术细节问题
 - ssr到客户端生成静态页面，标识是如何设置的
 - 客户端如何检查状态不一致的，不一致会造成控制台输出警告信息，且客户端从头重新渲染
-- 在Vue，这个技术叫”客户端激活(hydration)`
+- 在Vue，这个技术叫"客户端激活(hydration)"
 
 ### 了解源代码的几个思路
 - 从测试代码看起
@@ -169,11 +169,33 @@ createSSRApp，所以它认为本身由于真正的服务器下发的首页的�
   Suspense：全局调用异步组件的容器
   	step 1：构建一个AsyncChild，声明自己是一个异步组件，在async setup()，包含了渲染一个span，且Span注册onClick事件，触发onClick的时候让span的value值加1
   	step 2：用<span>0</span>渲染container，渲染函数用Suspense Wrap AsyncChild。
-	step 3：await new Promise(r => setTimeout(r)),
-	step 4: 触发span的click事件
+	step 3：await new Promise(r => setTimeout(r));
+	（这里是等待hydration检查完毕，或者是同步渲染完毕，宏任务模拟一个异步事件）
+	step 4: 代码异步触发span的click事件。
+		（异步事件和行为回调结果数据，导致step5的数据变化）
 	step 5: 查看container.innerHTML是否已经是 <span>1</span>
 
-  Async Component: 异步的组件
-  step 1：构建一个组件
+  Async Component: 异步引入的组件
+  step 1：构建一个普通组件Comp，渲染一個button，内容是hello!，也有自己的点击事件
+  step 2：用defineAsyncComponet定义一个异步引入的组件AsyncComp，组件的渲染是异步的，
+  （渲染函数用了new Promise，且resolve被外部变量serverResolve引用。）
+  step 3：定义App，用server render的方式渲染App，且App渲染AsyncComp，返回htmlPromise;
+  step 4：普通组件Comp被serverResolve作为AsyncCom异步渲染的值返回。
+  step 5：await htmlPromise;
+	(等待ssr的渲染结果返回)
+  step 6：expect预期返回的结果是`"<!--[-->hello<button>hello!</button>world<!--]-->"`
+	（前面是个注释anchor，后面也是个注释anchor，中间的内容是可以渲染出来的）
+
+  PS：这块比较绕，我单独写了个例子来查看Suspense和Async Component的区别。
+
+  Suspense的default是默认加载的内容，一般用于占位图或者默认加载文本等
+  Suspense的fallback实在加载失败后显示的内容。
+  那正常wrap的组件就是AsyncComp，上面的2个例子有点区别：
+  1）定义了一个异步组件，在自己内部异步触发了事件导致内容变化，其实模拟请求数据再改变更容易说明问题。
+  2）定义一个可以异步组件，然后异步加载了一个普通组件。
+  第二个AsyncComponent也是可以放到Suspense里面的。
 
 ```
+
+
+#### 目前纯记录，需要后期修改需要让人更容易看懂
