@@ -22,12 +22,18 @@ module.exports = {
 			{ text: '关于', link: '/about/' },
 		],
 		sidebar: [
-			{ text: 'Vue3源代码解析', link: '/vue3/' },
+			{
+				text: 'Vue3源代码解析', link: '/vue3/', children: [
+					{ text: '核心模块及API', link: '/vue3/core' },
+					{ text: 'AST-抽象语法树', link: '/vue3/ast' },
+					{ text: 'vue的README翻译', link: '/vue3/readme-trans' }
+				]
+			},
 			{
 				text: 'Ghost博客',
 				link: '/ghost/',
+				collapsable: true,
 				children: [
-					{ text: 'ghost default', link: '/ghost/' },
 					{ text: '2016-03-11', link: '/ghost/2016-03-11' },
 					{ text: '2017-02-06', link: '/ghost/2017-02-06' },
 					{ text: '2019-06-16', link: '/ghost/2019-06-16' },
@@ -38,6 +44,7 @@ module.exports = {
 					{ text: '2021-09-19', link: '/ghost/2021-09-19' },
 				]
 			}
+
 		]
 	}
 }
