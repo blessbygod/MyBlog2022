@@ -42,6 +42,7 @@ module.exports = {
 					{ text: '2021-01-11', link: '/ghost/2021-01-11' },
 					{ text: '2021-03-11', link: '/ghost/2021-03-11' },
 					{ text: '2021-09-19', link: '/ghost/2021-09-19' },
+					{ text: '2022-03-28', link: '/ghost/2022-03-28' },
 				]
 			}
 
