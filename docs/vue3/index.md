@@ -142,7 +142,7 @@ createSSRApp，所以它认为本身由于真正的服务器下发的首页的�
   这些API都是从@vue/runtime-dom导入的。
   runtime-dom是给vue的运行时环境使用的API。
 
-  注意这里使用的是createSSRApp, 而不是createApp。
+  注意这里使用的是createSSRApp, createSSRApp才会默认调用hydration，而不是createApp。
 
   测试用例的部分大家可以自己看，拿Text， comment, static举例：
     测试之前有个
@@ -195,6 +195,57 @@ createSSRApp，所以它认为本身由于真正的服务器下发的首页的�
   2）定义一个可以异步组件，然后异步加载了一个普通组件。
   第二个AsyncComponent也是可以放到Suspense里面的。
 
+```
+- 源代码分析 - runtime-core/src/hydration.ts
+	- 主干调用
+	- createHydrationFunctions -> hydrate -> hydrateNode => return nextNode -> 递归检查;
+	- 主要对比函数 hydrateNode
+	- 下面的源代码，可以看到对比Text做了什么
+```js
+const hydrateNode = (
+    node: Node, // 当前ssr在客户端上直接渲染的DOM节点，
+    vnode: VNode, // 客户端挂载的VNode， 主要比较这两个节点的差异
+    parentComponent: ComponentInternalInstance | null,
+    parentSuspense: SuspenseBoundary | null,
+    slotScopeIds: string[] | null,
+    optimized = false
+  ): Node | null => {
+    const isFragmentStart = isComment(node) && node.data === '['
+    const onMismatch = () =>
+      handleMismatch(
+        node,
+        vnode,
+        parentComponent,
+        parentSuspense,
+        slotScopeIds,
+        isFragmentStart
+      )
+
+    const { type, ref, shapeFlag } = vnode
+    const domType = node.nodeType
+    vnode.el = node
+
+    let nextNode: Node | null = null
+    switch (type) {
+      case Text:
+		// 如果文档类型都不一致，直接输出不匹配
+        if (domType !== DOMNodeTypes.TEXT) {
+          nextNode = onMismatch()
+        } else {
+		  // 比较文本节点和VNode的children属性
+          if ((node as Text).data !== vnode.children) {
+            hasMismatch = true
+            __DEV__ &&
+              warn(
+                `Hydration text mismatch:` +
+                  `\n- Client: ${JSON.stringify((node as Text).data)}` +
+                  `\n- Server: ${JSON.stringify(vnode.children)}`
+              )
+            ;(node as Text).data = vnode.children as string
+          }
+          nextNode = nextSibling(node)
+        }
+        break
 ```
 
 
