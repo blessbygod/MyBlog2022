@@ -31,6 +31,16 @@ module.exports = {
 				]
 			},
 			{
+				text: 'React', link: '/react/', children: [
+
+				]
+			},
+			{
+				text: 'Typescript', link: '/typescript/', children: [
+					{ text: 'Omit的实现', link: '/typescript/omit' }
+				]
+			},
+			{
 				text: 'Ghost博客',
 				link: '/ghost/',
 				collapsable: true,
